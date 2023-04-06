@@ -1,0 +1,5 @@
+Flask
+marshmallow
+sqlalchemy
+python-dotenv
+flask_migrate
