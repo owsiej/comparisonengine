@@ -16,6 +16,7 @@ class ShopSchemaListOutput(PlainShopSchema):
 
 class ProductSchemaListOutput(PlainProductSchema):
     id = fields.Integer(dump_only=True)
+    shop_id = fields.Integer(dump_only=True)
 
 
 class ShopSchemaIdOutput(ShopSchemaListOutput):
@@ -28,3 +29,8 @@ class ProductSchemaIdOutput(ProductSchemaListOutput):
     datetime_create = fields.DateTime()
     datetime_update = fields.DateTime()
     shop = fields.Nested(ShopSchemaListOutput(), dump_only=True)
+
+
+class ProductSchemaUpdate(Schema):
+    name = fields.Str()
+    price = fields.Float()

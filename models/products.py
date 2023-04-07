@@ -11,7 +11,6 @@ class ProductModel(db.Model):
     price = db.Column(db.Float, nullable=False)
     datetime_create = db.Column(db.DateTime(), default=datetime.now)
     datetime_update = db.Column(db.DateTime(), onupdate=datetime.now)
-
     shop_id = db.Column(db.Integer,
                         db.ForeignKey("shops.id"),
                         unique=False,
