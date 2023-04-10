@@ -37,8 +37,8 @@ class Product(MethodView):
                                "message2": "Missing data for required field."})
     def put(self, productData, productId):
         product = db.get_or_404(ProductModel, productId)
-        shop = db.get_or_404(ShopModel, product.shop_id)
         if productData.get("name"):
+            shop = db.get_or_404(ShopModel, product.shop_id)
             if shop.products.filter_by(name=productData['name']).first():
                 abort(400, message="Product with requested name is already in shop.")
             product.name = productData['name']
@@ -56,7 +56,7 @@ class Product(MethodView):
         return {"message": "Product deleted successfully."}
 
 
-@blp.route("/shop/<int:shopId>/products")
+@blp.route("/shops/<int:shopId>/products")
 class ProductsInShop(MethodView):
 
     @blp.response(200, ProductSchemaListOutput(many=True),

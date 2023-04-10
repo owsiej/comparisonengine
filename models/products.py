@@ -16,5 +16,5 @@ class ProductModel(db.Model):
                         unique=False,
                         nullable=False)
 
-    tags = db.relationship("TagModel", back_populates="products", secondary="tags_products")
     shop = db.relationship("ShopModel", back_populates="products")
+    tags = db.relationship("TagModel", back_populates="products", secondary="tags_products")
