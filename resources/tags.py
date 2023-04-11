@@ -10,14 +10,14 @@ blp = Blueprint("tags", __name__, description="Operations on tags")
 
 @blp.route("/tags")
 class TagList(MethodView):
-    @blp.response(200, TagSchemaListOutput, description="Returns all tags.")
+    @blp.response(200, TagSchemaListOutput(many=True), description="Returns all tags.")
     def get(self):
         return TagModel.query.all()
 
 
 @blp.route("/shop/<int:shopId>/tags")
 class TagInShop(MethodView):
-    @blp.response(200, TagSchemaListOutput, description="Returns tags in requested shop.")
+    @blp.response(200, TagSchemaListOutput(many=True), description="Returns tags in requested shop.")
     @blp.alt_response(404, description="Occurs when shop with requested id doesn't exist.")
     def get(self, shopId):
         shop = db.get_or_404(ShopModel, shopId)
@@ -43,7 +43,7 @@ class TagInShop(MethodView):
         return {"message": "All tags from shop successfully deleted."}
 
 
-@blp.route("/tag/<int:tagId>")
+@blp.route("/tags/<int:tagId>")
 class Tag(MethodView):
     @blp.response(200, TagSchemaIdOutPut, description="Returns requested tag.")
     @blp.alt_response(404, description="Occurs when tag with requested id doesn't exist.")
@@ -68,6 +68,8 @@ class Tag(MethodView):
     @blp.alt_response(404, description="Occurs when tag with requested id doesn't exist.")
     def delete(self, tagId):
         tag = db.get_or_404(TagModel, tagId)
+        if tag.products:
+            abort(400, message="You can not delete tag linked to product.")
         db.session.delete(tag)
         db.session.commit()
         return {"message": "Tag deleted successfully."}
@@ -80,6 +82,8 @@ class LinkTagToProduct(MethodView):
     def post(self, productId, tagId):
         product = db.get_or_404(ProductModel, productId)
         tag = db.get_or_404(TagModel, tagId)
+        if product.shop_id != tag.shop_id:
+            abort(400, message="Requested product and tag aren't in the same shop.")
         product.tags.append(tag)
         db.session.add(product)
         db.session.commit()

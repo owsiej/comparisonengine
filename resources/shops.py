@@ -65,6 +65,9 @@ class Shop(MethodView):
     @blp.alt_response(404, description="Chosen shop doesn't exist.")
     def delete(self, shopId):
         shop = db.get_or_404(ShopModel, shopId)
-        db.session.delete(shop)
-        db.session.commit()
+        try:
+            db.session.delete(shop)
+            db.session.commit()
+        except IntegrityError:
+            abort(400, message="Deleting shop with products in it is forbidden.")
         return {"message": "Shop deleted successfully."}
